@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Applications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2E86AB, #F6C667);
+            color: #fff;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .application {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .application h3 {
+            margin-top: 0;
+        }
+        button {
+            padding: 8px 15px;
+            background: #27AE60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #219150;
+        }
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>View Applications</h1>
+    <p>Review and manage job applications</p>
+</header>
+
+<div id="applicationsContainer"></div>
+
+<p><a href="dashboard.html">⬅ Back to Dashboard</a></p>
+
+<script>
+    function displayApplications() {
+        let applications = JSON.parse(localStorage.getItem("jobApplications")) || [];
+        const container = document.getElementById("applicationsContainer");
+        container.innerHTML = "";
+
+        if (applications.length === 0) {
+            container.innerHTML = "<p>No applications received yet.</p>";
+            return;
+        }
+
+        applications.forEach((app, index) => {
+            container.innerHTML += `
+                <div class="application">
+                    <h3>${app.fullName}</h3>
+                    <p><strong>Email:</strong> ${app.email}</p>
+                    <p><strong>Phone:</strong> ${app.phone}</p>
+                    <p><strong>Position Applied For:</strong> ${app.jobTitle}</p>
+                    <p><strong>Province:</strong> ${app.province}</p>
+                    <p><strong>Cover Letter:</strong> ${app.coverLetter}</p>
+                    <p><a href="${app.cvLink}" target="_blank" style="color:#FFD700;">📄 View CV</a></p>
+                    <button onclick="deleteApplication(${index})" style="background:#E74C3C;">Delete</button>
+                </div>
+            `;
+        });
+    }
+
+    function deleteApplication(index) {
+        let applications = JSON.parse(localStorage.getItem("jobApplications")) || [];
+        applications.splice(index, 1);
+        localStorage.setItem("jobApplications", JSON.stringify(applications));
+        displayApplications();
+    }
+
+    window.onload = displayApplications;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apply for Job</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.onload = () => {
+      if(localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+      // Get job from URL parameter
+      const params = new URLSearchParams(window.location.search);
+      const job = params.get('job');
+      if(job) {
+        document.getElementById('jobTitle').innerText = job;
+        document.getElementById('jobInput').value = job;
+      }
+    };
+
+    function submitApplication() {
+      const cvInput = document.getElementById('cvFile');
+      if(cvInput.files.length === 0) {
+        alert("Please upload your CV before submitting.");
+        return;
+      }
+      // In this demo, just simulate submit and show alert
+      alert("Application submitted successfully with your CV!");
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Apply for <span id="jobTitle"></span></h1>
+    <form onsubmit="event.preventDefault(); submitApplication();" enctype="multipart/form-data">
+      <input type="hidden" id="jobInput" name="job" />
+      
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required />
+
+      <label for="cvFile">Upload CV (PDF, DOC, DOCX)</label>
+      <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required />
+
+      <button type="submit">Submit Application</button>
+    </form>
+    <a href="joblisting.html">Back to Job Listings</a><br />
+    <a href="dashboard.html">Back to Dashboard</a>
+  </div>
+</body>
+</html>

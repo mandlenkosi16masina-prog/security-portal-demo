@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search Jobs by Province</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.onload = () => {
+      if(localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+      populateJobs();
+    };
+
+    const jobsData = [
+      { title: "Security Guard", province: "Gauteng" },
+      { title: "Supervisor", province: "Western Cape" },
+      { title: "Control Room Operator", province: "KwaZulu-Natal" },
+      { title: "Patrol Officer", province: "Eastern Cape" },
+      { title: "Security Guard", province: "Limpopo" },
+      { title: "Supervisor", province: "Mpumalanga" },
+      { title: "Control Room Operator", province: "North West" },
+      { title: "Security Guard", province: "Free State" },
+      { title: "Supervisor", province: "Northern Cape" }
+    ];
+
+    function populateJobs(filteredProvince = "") {
+      const list = document.getElementById("jobList");
+      list.innerHTML = "";
+
+      const filteredJobs = filteredProvince ? 
+        jobsData.filter(job => job.province === filteredProvince) : 
+        jobsData;
+
+      if(filteredJobs.length === 0) {
+        list.innerHTML = "<li>No jobs found for this province.</li>";
+        return;
+      }
+
+      filteredJobs.forEach(job => {
+        const li = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = `applyforjob.html?job=${encodeURIComponent(job.title)}`;
+        link.textContent = `${job.title} - ${job.province}`;
+        li.appendChild(link);
+        list.appendChild(li);
+      });
+    }
+
+    function onProvinceChange() {
+      const province = document.getElementById("provinceSelect").value;
+      populateJobs(province);
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Find Jobs by Province</h1>
+    <label for="provinceSelect">Select Province:</label>
+    <select id="provinceSelect" onchange="onProvinceChange()">
+      <option value="">-- All Provinces --</option>
+      <option value="Gauteng">Gauteng</option>
+      <option value="Western Cape">Western Cape</option>
+      <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+      <option value="Eastern Cape">Eastern Cape</option>
+      <option value="Limpopo">Limpopo</option>
+      <option value="Mpumalanga">Mpumalanga</option>
+      <option value="North West">North West</option>
+      <option value="Free State">Free State</option>
+      <option value="Northern Cape">Northern Cape</option>
+    </select>
+    <ul id="jobList" style="margin-top:20px;"></ul>
+    <a href="dashboard.html">Back to Dashboard</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Red Flags – Multi-Company Employees</title>
+  <style>
+    body{font-family:Arial, sans-serif;background:linear-gradient(135deg,#2E86AB,#F6C667);color:#fff;margin:0;padding:20px;}
+    .wrap{max-width:1000px;margin:0 auto;}
+    h1{margin:10px 0 6px;}
+    .panel{background:rgba(255,255,255,.15);padding:16px;border-radius:12px;margin:12px 0;}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,select{border:none;border-radius:8px;padding:10px}
+    label{font-weight:bold}
+    table{width:100%;border-collapse:collapse;margin-top:12px;background:rgba(255,255,255,.10)}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.25);text-align:left}
+    th{background:rgba(255,255,255,.12)}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:700}
+    .bad{background:#E74C3C;color:#fff}
+    .ok{background:#27AE60;color:#fff}
+    .muted{opacity:.9;font-size:.9em}
+    a{color:#FFD700}
+    .footer{margin-top:14px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Red Flags – Multi-Company Employees</h1>
+  <p class="muted">Flags any employee with employment history at <strong>more than one company</strong>.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="filterName">Search name:</label>
+      <input id="filterName" type="text" placeholder="Type a name…">
+      <label><input id="onlyRed" type="checkbox"> Show only red flags</label>
+      <label for="threshold">Company threshold:</label>
+      <select id="threshold">
+        <option value="2" selected>More than 1 company</option>
+        <option value="3">More than 2 companies</option>
+        <option value="4">More than 3 companies</option>
+      </select>
+      <button onclick="resetDemo()">Load Demo Data</button>
+    </div>
+
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th># Companies</th>
+          <th>Status</th>
+          <th>Companies (most recent first)</th>
+          <th>Last End Date</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- rows injected here -->
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <a href="dashboard.html">⬅ Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+<script src="history-manager.js"></script>
+<script>
+/**
+ * Data format expected in localStorage.employeeHistory:
+ * [
+ *  { name: "Full Name",
+ *    history: [
+ *      { company: "ABC Security", role:"Guard", start:"2020-01-01", end:"2022-03-31" },
+ *      { company: "SecurePlus", role:"Supervisor", start:"2022-04-01", end:"2024-12-15" }
+ *    ]
+ *  },
+ *  ...
+ * ]
+ */
+
+const DEMO_DATA = [
+  { name:"John Dlamini", history:[
+      {company:"SafeGuard SA", role:"Security Officer", start:"2020-01-10", end:"2022-05-31"},
+      {company:"SecureVision", role:"CCTV Monitor", start:"2022-06-01", end:"2024-12-15"}
+  ]},
+  { name:"Naledi Mokoena", history:[
+      {company:"Coastal Security", role:"Patrol Guard", start:"2021-02-01", end:"2024-12-31"}
+  ]},
+  { name:"Sipho Nkosi", history:[
+      {company:"Rapid Response", role:"Armed Response", start:"2019-03-01", end:"2020-11-30"},
+      {company:"Urban Shield", role:"Armed Response", start:"2020-12-01", end:"2022-07-31"},
+      {company:"MetroSafe", role:"Shift Supervisor", start:"2022-08-01", end:""}
+  ]},
+  { name:"Lerato Khumalo", history:[
+      {company:"Protec Systems", role:"Access Control", start:"2022-01-15", end:""}
+  ]}
+];
+
+function loadData(){
+  let data = [];
+  try{
+    data = JSON.parse(localStorage.getItem("employeeHistory")) || [];
+  }catch(e){ data = []; }
+  if(!Array.isArray(data) || data.length===0){ data = DEMO_DATA; }
+  // Normalize: sort each history by end desc -> start desc
+  data.forEach(p=>{
+    p.history = (p.history||[]).slice().sort((a,b)=>{
+      const endA = a.end || "9999-12-31";
+      const endB = b.end || "9999-12-31";
+      if(endA!==endB) return endB.localeCompare(endA);
+      return (b.start||"").localeCompare(a.start||"");
+    });
+  });
+  return data;
+}
+
+function render(){
+  const tbody = document.getElementById("tbody");
+  const q = document.getElementById("filterName").value.trim().toLowerCase();
+  const onlyRed = document.getElementById("onlyRed").checked;
+  const threshold = parseInt(document.getElementById("threshold").value,10); // e.g., 2 => flag if >=2
+
+  const data = loadData();
+  tbody.innerHTML = "";
+
+  const rows = data
+    .filter(p => !q || p.name.toLowerCase().includes(q))
+    .map(p => {
+      const companies = Array.from(new Set((p.history||[]).map(h=>h.company).filter(Boolean)));
+      const count = companies.length;
+      const isRed = count >= threshold;
+      const lastEnd = (p.history && p.history[0] && p.history[0].end) ? p.history[0].end : "Current";
+      return { p, companies, count, isRed, lastEnd };
+    })
+    .filter(r => !onlyRed || r.isRed);
+
+  if(rows.length===0){
+    tbody.innerHTML = '<tr><td colspan="5" class="muted">No matching employees.</td></tr>';
+    return;
+  }
+
+  rows.forEach(({p, companies, count, isRed, lastEnd})=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(p.name)}</td>
+      <td>${count}</td>
+      <td><span class="badge ${isRed?'bad':'ok'}">${isRed?'🔴 Red Flag':'🟢 OK'}</span></td>
+      <td>${companies.map(c=>escapeHtml(c)).join(" • ")}</td>
+      <td>${lastEnd || 'Current'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function resetDemo(){
+  localStorage.removeItem("employeeHistory");
+  alert("Demo dataset loaded for this view.");
+  render();
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+
+document.getElementById("filterName").addEventListener("input", render);
+document.getElementById("onlyRed").addEventListener("change", render);
+document.getElementById("threshold").addEventListener("change", render);
+window.addEventListener("load", render);
+</script>
+</body>
+</html>

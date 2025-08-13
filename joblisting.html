@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Listings</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.onload = () => {
+      if(localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Available Jobs</h1>
+    <ul>
+      <li>
+        Security Guard - <a href="applyforjob.html?job=Security%20Guard">Apply Now</a>
+      </li>
+      <li>
+        Supervisor - <a href="applyforjob.html?job=Supervisor">Apply Now</a>
+      </li>
+      <li>
+        Control Room Operator - <a href="applyforjob.html?job=Control%20Room%20Operator">Apply Now</a>
+      </li>
+    </ul>
+    <a href="dashboard.html">Back to Dashboard</a>
+  </div>
+</body>
+</html>

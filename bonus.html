@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bonus Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.onload = () => {
+      if(localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    };
+
+    const basicAnnualBonus = 6514; // Fixed basic bonus amount
+    const basicMonthlySalary = 6514; // Assuming basic monthly salary same as bonus base for hourly rate
+    const workingDaysPerMonth = 21;
+    const workingHoursPerDay = 12;
+
+    function calculateBonus() {
+      const absentHours = parseFloat(document.getElementById("absentHours").value);
+
+      if(isNaN(absentHours) || absentHours < 0) {
+        alert("Please enter valid absent or late hours.");
+        return;
+      }
+
+      // Calculate hourly rate based on monthly salary
+      const hourlyRate = basicMonthlySalary / (workingDaysPerMonth * workingHoursPerDay);
+
+      // Calculate deduction for absent hours
+      const deduction = hourlyRate * absentHours;
+
+      // Calculate final bonus (cannot be less than zero)
+      let finalBonus = basicAnnualBonus - deduction;
+      if(finalBonus < 0) finalBonus = 0;
+
+      document.getElementById("result").innerText =
+        `Basic Annual Bonus: R${basicAnnualBonus.toFixed(2)}\n` +
+        `Deduction for ${absentHours} hours absent/late: R${deduction.toFixed(2)}\n` +
+        `Final Bonus: R${finalBonus.toFixed(2)}`;
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Bonus Calculator</h1>
+    <label for="absentHours">Total Hours Absent or Late</label>
+    <input type="number" id="absentHours" min="0" step="0.1" required />
+    <button onclick="calculateBonus()">Calculate Bonus</button>
+    <pre id="result" style="white-space: pre-line; margin-top: 15px;"></pre>
+    <a href="dashboard.html">Back to Dashboard</a>
+  </div>
+</body>
+</html>

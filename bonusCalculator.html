@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Employee Bonus Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#2E86AB,#F6C667);color:#fff;padding:20px;}
+.wrap{max-width:800px;margin:0 auto;}
+h1{text-align:center;margin-bottom:20px;}
+.panel{background:rgba(255,255,255,.15);padding:20px;border-radius:12px;}
+label{display:block;margin:10px 0 5px;}
+input,select,button{width:100%;padding:10px;margin-bottom:10px;border:none;border-radius:8px;font-size:16px;}
+button{background:#27AE60;color:#fff;font-weight:bold;cursor:pointer;}
+button:hover{background:#1e8449;}
+.result{margin-top:20px;padding:15px;background:rgba(255,255,255,.12);border-radius:10px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<h1>Employee Bonus Calculator</h1>
+
+<div class="panel">
+    <label for="employeeSelect">Select Employee:</label>
+    <select id="employeeSelect">
+        <option value="">-- Select Employee --</option>
+    </select>
+
+    <label for="absentDays">Number of Absent Days / Late Hours:</label>
+    <input type="number" id="absentDays" min="0" value="0">
+
+    <button onclick="calculateBonus()">Calculate Bonus</button>
+
+    <div class="result" id="resultBox" style="display:none;">
+        <h3>Bonus Calculation:</h3>
+        <p id="bonusDetails"></p>
+    </div>
+</div>
+
+<p style="text-align:center;"><a href="dashboard.html">⬅ Back to Dashboard</a></p>
+</div>
+
+<script>
+// Demo employee names
+const demoEmployees = ["John Dlamini", "Sihle Nkosi", "Thabo Mokoena", "Zanele Khumalo", "Sipho Mthembu"];
+
+// Base salary according to your rules
+const BASE_BONUS = 6514; // R6514 for employees eligible
+const DEDUCTION_PER_DAY = 29.31 * 12; // Example: 12 hours per day missed
+
+function populateEmployees(){
+    const select = document.getElementById("employeeSelect");
+    demoEmployees.forEach(emp=>{
+        select.innerHTML += `<option value="${emp}">${emp}</option>`;
+    });
+}
+
+function calculateBonus(){
+    const employeeName = document.getElementById("employeeSelect").value;
+    const absent = parseInt(document.getElementById("absentDays").value)||0;
+    const resultBox = document.getElementById("resultBox");
+    const bonusDetails = document.getElementById("bonusDetails");
+
+    if(!employeeName){
+        alert("Please select an employee.");
+        return;
+    }
+
+    let deduction = absent * DEDUCTION_PER_DAY;
+    let finalBonus = BASE_BONUS - deduction;
+    if(finalBonus < 0) finalBonus = 0;
+
+    resultBox.style.display = "block";
+    bonusDetails.innerHTML = `
+        Employee: <strong>${employeeName}</strong><br>
+        Base Bonus: R${BASE_BONUS.toFixed(2)}<br>
+        Deduction for Absences / Late: R${deduction.toFixed(2)}<br>
+        <strong>Final Bonus: R${finalBonus.toFixed(2)}</strong>
+    `;
+}
+
+// Populate dropdown on load
+window.addEventListener("load", populateEmployees);
+</script>
+
+</body>
+</html>

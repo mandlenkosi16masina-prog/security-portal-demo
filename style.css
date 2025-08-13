@@ -1,0 +1,129 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #F0F4F8;
+  margin: 0;
+  padding: 0;
+  color: #333333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.15);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.container:hover {
+  box-shadow: 0 12px 28px rgba(0, 123, 255, 0.3);
+}
+
+h1 {
+  color: #007BFF;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #333333;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 2px solid #20C997;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #FF6F00;
+  outline: none;
+  box-shadow: 0 0 8px #FF6F00AA;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #FF6F00;
+  box-shadow: 0 6px 12px #FF6F0077;
+}
+
+nav a, a {
+  display: inline-block;
+  margin: 15px 10px 0 0;
+  color: #007BFF;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+nav a:hover, a:hover {
+  color: #FF6F00;
+  text-decoration: underline;
+}
+
+pre#result {
+  background-color: #E0F7EF;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 1px solid #20C997;
+  color: #114B5F;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 20px;
+  white-space: pre-line;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #20C997;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #114B5F;
+}
+
+th {
+  background-color: #E0F7EF;
+}
+
+.logout {
+  color: #FF6F00;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.small {
+  font-size: 13px;
+  color: #666666;
+  margin-top: 12px;
+  text-align: center;
+}
